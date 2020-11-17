@@ -2,12 +2,12 @@
 """ 
 Frac_freshgas * ( (1/10) * MV * P + (1 - (1/10) ) * MV * Frac_met_surface) + ( Frac_loop - (Frac_met_surface/P) ) * ((9/10) * MV)
 ——————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-													    MV*P
+                                                              MV*P
 
 
 Frac_freshgas * ( (1/10) * MV * Frac_met_surface) + ( Frac_loop - (Frac_met_surface/P) ) * ((9/10) * MV * P)
 ————————————————————————————————————————————————————————————————————————————————————————————————————————————
-													    MV*P
+                                                      MV*P
 
 Frac_freshgas = Gas from cylinder in fraction of O2 (eg, 0.32, 0.36, 0.40) 
 MV = Minute Volume (SCR rate… 20l, 15l etc)
