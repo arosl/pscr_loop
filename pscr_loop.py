@@ -25,7 +25,7 @@ mv = float(input("Minute volume: "))
 presure = float(input("Pressure at depth: "))
 bellow = int(input("Bellow ratio (6-10): "))
 
-frac_met_surface = 0.042
+frac_met_surface =  (0.8/mv) # good static value 0.042
 new_gas_fraction = 1/bellow
 old_gas_fraction = (bellow -1)/bellow
 frac_loop = frac_freshgas
