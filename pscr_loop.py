@@ -19,23 +19,44 @@ Frac_loop = Fraction of oxygen in RB loop (the result of this equation) FiO2
 It looks like the first formula given doesnt correct for depth so i added P to the numerator, 
 and it now generate the correct FiO2 for all depths in the tables
 """
+import argparse
 
-frac_freshgas = float(input("Oxygen fraction: "))
-mv = float(input("Minute volume: "))
-presure = float(input("Pressure at depth: "))
-bellow = int(input("Bellow ratio (6-10): "))
+def calc_loop(frac_freshgas, mv, presure, bellow):
+    frac_met_surface =  (0.8/mv) # good static value 0.042
+    new_gas_fraction = 1/bellow
+    old_gas_fraction = (bellow -1)/bellow
+    frac_loop = frac_freshgas
+    old_loop = frac_loop + 1
 
-frac_met_surface =  (0.8/mv) # good static value 0.042
-new_gas_fraction = 1/bellow
-old_gas_fraction = (bellow -1)/bellow
-frac_loop = frac_freshgas
-old_loop = frac_loop + 1
+    while (old_loop - frac_loop) > 0.000000001:
+        old_loop = frac_loop
+        frac_loop = (frac_freshgas * (new_gas_fraction * mv * presure + 
+        (1 - new_gas_fraction) * mv * frac_met_surface) + (frac_loop - 
+        (frac_met_surface/presure)) * (old_gas_fraction*mv*presure)
+        )/( mv * presure)
+    return frac_loop
 
-while (old_loop - frac_loop) > 0.000000001:
-    old_loop = frac_loop
-    frac_loop = (frac_freshgas * (new_gas_fraction * mv * presure + 
-    (1 - new_gas_fraction) * mv * frac_met_surface) + (frac_loop - 
-    (frac_met_surface/presure)) * (old_gas_fraction*mv*presure))/( mv * presure)
+def run(args):
+    frac_freshgas = args.o2fraction
+    mv = args.mv
+    depth = args.depth
+    bellow = args.bellow
+    presure = (depth/10) + 1
 
-print("FiO2 %.2f" % frac_loop)
-print("ppO2 %.2f" % (frac_loop*presure))
+    loop = calc_loop(frac_freshgas, mv, presure, bellow)
+
+    print("FiO2 %.2f" % loop)
+    print("ppO2 %.2f" % (loop*presure))
+
+def main():
+    parser=argparse.ArgumentParser(description="Calculate oxygen fraction in loop")
+    parser.add_argument("-f","--o2fraction",help="Oxygen fraction of breathing gas on cylinder" ,dest="o2fraction", type=float, required=True)
+    parser.add_argument("-d","--depth",help="Depth you calculate for in meters" ,dest="depth", type=float, default=0 , required=False)
+    parser.add_argument("-v","--minutevolume",help="Minute Volume, liters you breath in one minute" ,dest="mv", type=float, default=19 , required=False)
+    parser.add_argument("-b","--bellowratio",help="Ratio of bellow replacement rate 1:6 to 1:10" ,dest="bellow", type=int, default=10 , required=False)
+    parser.set_defaults(func=run)
+    args=parser.parse_args()
+    args.func(args)
+
+if __name__=="__main__":
+    main()
