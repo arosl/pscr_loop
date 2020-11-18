@@ -40,12 +40,14 @@ def run(args):
     depth = args.depth
     bellow = args.bellow
     graph = args.graph
+    noppo2 = args.nopp02
+    nofio2 = args.nofi02
     presure = (depth/10) + 1
 
     o2drop = calc_loop(frac_freshgas, mv, presure, bellow)
     
     if graph:
-        label = """for nitrox %.2f at depth %.0dm\nlevel of at FiO2 %.2f, ppO2 %.2f 
+        label = """for O2 fraction %.2f at depth %.0dm\nlevel of at FiO2 %.2f, ppO2 %.2f 
                 """ % (frac_freshgas, depth, o2drop[-1], (o2drop[-1]*presure))
         x = range(0,len(o2drop))
         y = o2drop
@@ -53,8 +55,11 @@ def run(args):
         plt.legend() 
         plt.show() 
 
-    print("FiO2 %.2f" % o2drop[-1])
-    print("ppO2 %.2f" % (o2drop[-1]*presure))
+    if not nofio2:
+        print("FiO2 %.2f" % o2drop[-1])
+    
+    if not noppo2:
+        print("ppO2 %.2f" % (o2drop[-1]*presure))
 
 def main():
     parser=argparse.ArgumentParser(description="Calculate oxygen fraction in loop")
@@ -62,7 +67,10 @@ def main():
     parser.add_argument("-d","--depth",help="The depth you calculate for in meters(m)" ,dest="depth", type=float, default=0 , required=False)
     parser.add_argument("-v","--minutevolume",help="Minute Volume, liters you breath in one minute" ,dest="mv", type=float, default=19 , required=False)
     parser.add_argument("-b","--bellowratio",help="Ratio of bellow replacement rate 1:6 to 1:10" ,dest="bellow", type=int, default=10 , required=False)
-    parser.add_argument("-g","--graph",help="print graph" ,dest="graph", type=lambda x:bool(strtobool(x)), nargs='?', const=True, default=False)
+    parser.add_argument("-g","--graph",help="print graph of oxygen drop" ,dest="graph", type=lambda x:bool(strtobool(x)), nargs='?', const=True, default=False)
+    parser.add_argument("--no-ppo2",help="do not print oxygen parsial pressure" ,dest="nopp02", type=lambda x:bool(strtobool(x)), nargs='?', const=True, default=False)
+    parser.add_argument("--no-fio2",help="do not print oxygen fraction in loop" ,dest="nofi02", type=lambda x:bool(strtobool(x)), nargs='?', const=True, default=False)
+
     parser.set_defaults(func=run)
     if len(sys.argv)==1:
         parser.print_help(sys.stderr)
