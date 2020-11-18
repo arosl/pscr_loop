@@ -70,7 +70,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="Calculate oxygen fraction in loop")
     parser.add_argument("-f", "--fractionoxy",
-                        help="Oxygen fraction of breathing gas on cylinder",
+                        help="Oxygen fraction of breathing gas on cylinder, "+
+                        "this agrument is mandatory",
                         dest="fractionoxy", type=float, required=True)
     parser.add_argument("-d", "--depth",
                         help="The depth you calculate for in meters(m)",
