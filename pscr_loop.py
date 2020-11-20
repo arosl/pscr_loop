@@ -72,6 +72,9 @@ def run(args):
     deco = args.deco
     presure = (depth/10) + 1
 
+    if frac_freshgas > 1:
+        frac_freshgas = frac_freshgas/100
+
     o2drop = calc_loop(frac_freshgas, mv, presure, bellow)
 
     if graph:
@@ -99,8 +102,8 @@ level of at FiO2 %.2f, ppO2 %.2f
             o2_min_table = o2_min
         o2_max = o2_min_max[1]
         o2_max_table = o2_max - (o2_max%3)
-        print("Minimum depth: %.0dm (%.0dm)\nMaximum depth: %.0dm (%.0dm)" % 
-        (o2_min_table, o2_min, o2_max_table, o2_max))
+        print("Minimum depth: %.0dm \nMaximum depth: %.0dm " % 
+        (o2_min_table, o2_max_table))
 
 
 
@@ -136,7 +139,7 @@ def main():
         dest="nominmax", type=lambda x: bool(strtobool(x)),
         nargs='?', const=True, default=False)
     parser.add_argument("--deco",
-        help="use ppO2 limit of 1.6 instead of 1.3 in max depth",
+        help="Use ppO2 limit of 1.6 instead of 1.3 in max depth",
         dest="deco", type=lambda x: bool(strtobool(x)),
         nargs='?', const=True, default=False)
 
