@@ -141,7 +141,7 @@ def main():
         dest="nofi02", type=lambda x: bool(strtobool(x)),
         nargs='?', const=True, default=False)
     parser.add_argument("-m", "--no-minmax", 
-        help="Do not min and max depth(m) for gas",
+        help="Do not print min and max depth(m) for gas",
         dest="nominmax", type=lambda x: bool(strtobool(x)),
         nargs='?', const=True, default=False)
     parser.add_argument("--deco",

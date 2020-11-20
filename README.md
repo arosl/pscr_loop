@@ -12,7 +12,8 @@ To install this tool, check out the repo and install the dependencies listed in 
 
   `pip install -r requirements.txt`
 
-
+## Usage
+If you run the script without arguments you get this help text:
 ```
 ./pscr_loop.py
 
@@ -39,8 +40,8 @@ optional arguments:
   -g, --graph
                         Print a graph of oxygen drop
   --no-ppo2             Do not print oxygen parsial pressure
-  --no-fio2 [           Do not print oxygen fraction in loop
+  --no-fio2             Do not print oxygen fraction in loop
   -m, --no-minmax
-                        Do not min and max depth(m) for gas
+                        Do not print min and max depth(m) for gas
   --deco                Use ppO2 limit of 1.6 instead of 1.3 in max depth
 ```
