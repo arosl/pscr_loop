@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 from distutils.util import strtobool
 
 
+# Caclulate oxygen fraction in the breathing loop
 def calc_loop(frac_freshgas, mv, presure, bellow):
     frac_met_surface = (0.8/mv)  # good static value 0.042
     new_gas_fraction = 1/bellow
@@ -36,6 +37,27 @@ def calc_loop(frac_freshgas, mv, presure, bellow):
         o2_drop.append(frac_loop)
     return o2_drop
 
+# Cacluate the minumim and maximum safe area for a given oxygen fraction
+def min_max_gas(frac_freshgas, mv, presure, bellow, deco):
+    FiO2 = 0
+    presure = float(1)
+    o2_min = 0
+    pp02lim = 1.3
+    if deco:
+        pp02lim = 1.6
+
+    while (FiO2 * presure) <= pp02lim:
+        o2drop = calc_loop(frac_freshgas, mv, presure, bellow)
+        FiO2 = o2drop[-1]
+        ppO2 = FiO2 * presure
+        depth = (presure - 1)*10
+        if ppO2 < 0.21:
+            o2_min = depth
+        o2_max = (presure - 0.9)*10
+        presure = presure + 0.1
+        presure = round(presure, 2)
+
+    return(o2_min, o2_max)
 
 def run(args):
     frac_freshgas = args.fractionoxy
@@ -43,8 +65,10 @@ def run(args):
     depth = args.depth
     bellow = args.bellow
     graph = args.graph
+    min_max = args.minmax
     noppo2 = args.nopp02
     nofio2 = args.nofi02
+    deco = args.deco
     presure = (depth/10) + 1
 
     o2drop = calc_loop(frac_freshgas, mv, presure, bellow)
@@ -64,15 +88,21 @@ level of at FiO2 %.2f, ppO2 %.2f
         print("FiO2 %.2f" % o2drop[-1])
     if not noppo2:
         print("ppO2 %.2f" % (o2drop[-1]*presure))
+    
+    if min_max:
+        o2_min_max = min_max_gas(frac_freshgas, mv, presure, bellow, deco)
+        print("Minimum deph is: %.0dm\nMaximum depth is: %.0dm" % 
+        (o2_min_max[0], o2_min_max[1]))
+
 
 
 def main():
     parser = argparse.ArgumentParser(
         description="Calculate oxygen fraction in loop")
-    parser.add_argument("-f", "--fractionoxy",
+    parser.add_argument(
                         help="Oxygen fraction of breathing gas on cylinder, "+
                         "this agrument is mandatory",
-                        dest="fractionoxy", type=float, required=True)
+                        dest="fractionoxy", type=float)
     parser.add_argument("-d", "--depth",
                         help="The depth you calculate for in meters(m)",
                         dest="depth", type=float, default=0, required=False)
@@ -82,7 +112,10 @@ def main():
     parser.add_argument("-b", "--bellowratio",
                         help="Ratio of bellow replacement rate 1:6 to 1:10",
                         dest="bellow", type=int, default=10, required=False)
-    parser.add_argument("-g", "--graph", help="print graph of oxygen drop",
+    parser.add_argument("-m", "--minmax", help="Min and max depth(m) for gas",
+                        dest="minmax", type=lambda x: bool(strtobool(x)),
+                        nargs='?', const=True, default=False)    
+    parser.add_argument("-g", "--graph", help="Print a graph of oxygen drop",
                         dest="graph", type=lambda x: bool(strtobool(x)),
                         nargs='?', const=True, default=False)
     parser.add_argument("--no-ppo2",
@@ -92,6 +125,10 @@ def main():
     parser.add_argument("--no-fio2",
                         help="do not print oxygen fraction in loop",
                         dest="nofi02", type=lambda x: bool(strtobool(x)),
+                        nargs='?', const=True, default=False)
+    parser.add_argument("--deco",
+                        help="use ppO2 lim of 1.6 instead of 1.3",
+                        dest="deco", type=lambda x: bool(strtobool(x)),
                         nargs='?', const=True, default=False)
 
     parser.set_defaults(func=run)
