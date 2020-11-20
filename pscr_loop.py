@@ -66,7 +66,7 @@ def run(args):
     depth = args.depth
     bellow = args.bellow
     graph = args.graph
-    min_max = args.minmax
+    no_min_max = args.nominmax
     noppo2 = args.nopp02
     nofio2 = args.nofi02
     deco = args.deco
@@ -90,10 +90,13 @@ level of at FiO2 %.2f, ppO2 %.2f
     if not noppo2:
         print("ppO2 %.2f" % (o2drop[-1]*presure))
     
-    if min_max:
+    if not no_min_max:
         o2_min_max = min_max_gas(frac_freshgas, mv, presure, bellow, deco)
         o2_min = o2_min_max[0]
-        o2_min_table = o2_min + (3 - o2_min%3)
+        if (o2_min%3) != 0:
+            o2_min_table = o2_min + (3 - o2_min%3)
+        else:
+            o2_min_table = o2_min
         o2_max = o2_min_max[1]
         o2_max_table = o2_max - (o2_max%3)
         print("Minimum depth: %.0dm (%.0dm)\nMaximum depth: %.0dm (%.0dm)" % 
@@ -105,36 +108,37 @@ def main():
     parser = argparse.ArgumentParser(
         description="Calculate oxygen fraction in loop")
     parser.add_argument(
-                        help="Oxygen fraction of breathing gas on cylinder, "+
-                        "this agrument is mandatory",
-                        dest="fractionoxy", type=float)
+        help="Oxygen fraction of breathing gas on cylinder, " +
+        "this agrument is mandatory",
+        dest="fractionoxy", type=float)
     parser.add_argument("-d", "--depth",
-                        help="The depth you calculate for in meters(m)",
-                        dest="depth", type=float, default=0, required=False)
+        help="The depth you calculate for in meters(m)",
+        dest="depth", type=float, default=0, required=False)
     parser.add_argument("-v", "--minutevolume",
-                        help="Minute Volume, liters you breath in one minute",
-                        dest="mv", type=float, default=19, required=False)
+        help="Minute Volume, liters you breath in one minute",
+        dest="mv", type=float, default=19, required=False)
     parser.add_argument("-b", "--bellowratio",
-                        help="Ratio of bellow replacement rate 1:6 to 1:10",
-                        dest="bellow", type=int, default=10, required=False)
-    parser.add_argument("-m", "--minmax", help="Min and max depth(m) for gas",
-                        dest="minmax", type=lambda x: bool(strtobool(x)),
-                        nargs='?', const=True, default=False)    
+        help="Ratio of bellow replacement rate 1:6 to 1:10",
+        dest="bellow", type=int, default=10, required=False)
     parser.add_argument("-g", "--graph", help="Print a graph of oxygen drop",
-                        dest="graph", type=lambda x: bool(strtobool(x)),
-                        nargs='?', const=True, default=False)
+        dest="graph", type=lambda x: bool(strtobool(x)),
+        nargs='?', const=True, default=False)
     parser.add_argument("--no-ppo2",
-                        help="do not print oxygen parsial pressure",
-                        dest="nopp02", type=lambda x: bool(strtobool(x)),
-                        nargs='?', const=True, default=False)
+        help="Do not print oxygen parsial pressure",
+        dest="nopp02", type=lambda x: bool(strtobool(x)),
+        nargs='?', const=True, default=False)
     parser.add_argument("--no-fio2",
-                        help="do not print oxygen fraction in loop",
-                        dest="nofi02", type=lambda x: bool(strtobool(x)),
-                        nargs='?', const=True, default=False)
+        help="Do not print oxygen fraction in loop",
+        dest="nofi02", type=lambda x: bool(strtobool(x)),
+        nargs='?', const=True, default=False)
+    parser.add_argument("-m", "--no-minmax", 
+        help="Do not min and max depth(m) for gas",
+        dest="nominmax", type=lambda x: bool(strtobool(x)),
+        nargs='?', const=True, default=False)
     parser.add_argument("--deco",
-                        help="use ppO2 lim of 1.6 instead of 1.3",
-                        dest="deco", type=lambda x: bool(strtobool(x)),
-                        nargs='?', const=True, default=False)
+        help="use ppO2 limit of 1.6 instead of 1.3 in max depth",
+        dest="deco", type=lambda x: bool(strtobool(x)),
+        nargs='?', const=True, default=False)
 
     parser.set_defaults(func=run)
     if len(sys.argv) == 1:
