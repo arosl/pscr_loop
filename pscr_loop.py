@@ -53,6 +53,7 @@ def min_max_gas(frac_freshgas, mv, presure, bellow, deco):
         depth = (presure - 1)*10
         if ppO2 < 0.21:
             o2_min = depth
+        #set o2_max 1 meter deeper than current ppO2lim
         o2_max = (presure - 0.9)*10
         presure = presure + 0.1
         presure = round(presure, 2)
@@ -91,8 +92,12 @@ level of at FiO2 %.2f, ppO2 %.2f
     
     if min_max:
         o2_min_max = min_max_gas(frac_freshgas, mv, presure, bellow, deco)
-        print("Minimum deph is: %.0dm\nMaximum depth is: %.0dm" % 
-        (o2_min_max[0], o2_min_max[1]))
+        o2_min = o2_min_max[0]
+        o2_min_table = o2_min + (3 - o2_min%3)
+        o2_max = o2_min_max[1]
+        o2_max_table = o2_max - (o2_max%3)
+        print("Minimum depth: %.0dm (%.0dm)\nMaximum depth: %.0dm (%.0dm)" % 
+        (o2_min_table, o2_min, o2_max_table, o2_max))
 
 
 
