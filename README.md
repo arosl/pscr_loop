@@ -22,7 +22,8 @@ usage: pscr_loop.py [-h] [-d DEPTH] [-v MV] [-b BELLOW] [-g [GRAPH]] [--no-ppo2 
 Calculate oxygen fraction in loop
 
 positional arguments:
-  fractionoxy           Oxygen fraction of breathing gas on cylinder, this agrument is mandatory
+  fractionoxy           Oxygen fraction of breathing gas on cylinder, this agrument is mandatory. It accepts both oxygen fraction (eg 0.32) and
+                        oxygen percentage (eg 32).
 
 optional arguments:
   -h, --help            show this help message and exit

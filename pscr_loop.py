@@ -72,6 +72,10 @@ def run(args):
     deco = args.deco
     presure = (depth/10) + 1
 
+    if frac_freshgas > 100:
+        sys.exit(1)
+    if frac_freshgas <= 0:
+        sys.exit(1)
     if frac_freshgas > 1:
         frac_freshgas = frac_freshgas/100
 
@@ -112,7 +116,9 @@ def main():
         description="Calculate oxygen fraction in loop")
     parser.add_argument(
         help="Oxygen fraction of breathing gas on cylinder, " +
-        "this agrument is mandatory",
+        "this agrument is mandatory. " +
+        "It accepts both oxygen fraction (eg 0.32) and oxygen percentage " +
+        "(eg 32).",
         dest="fractionoxy", type=float)
     parser.add_argument("-d", "--depth",
         help="The depth you calculate for in meters(m)",
