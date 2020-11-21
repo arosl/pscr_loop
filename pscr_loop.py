@@ -55,8 +55,7 @@ def min_max_gas(frac_freshgas, mv, presure, bellow, deco):
             o2_min = depth
         #set o2_max 1 meter deeper than current ppO2lim
         o2_max = (presure - 0.9)*10
-        presure = presure + 0.1
-        presure = round(presure, 2)
+        presure = round((presure + 0.1), 2)
 
     return(o2_min, o2_max)
 
