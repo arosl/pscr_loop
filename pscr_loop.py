@@ -1,15 +1,37 @@
 #!/usr/bin/env python3
 """ 
-Frac_freshgas * ( (1/10) * MV * P + (1 - (1/10) ) * MV * Frac_met_surface) + ( Frac_loop - (Frac_met_surface/P) ) * ((9/10) * MV * P)
-—————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-                                                                MV*P
+Fmix * ( Kratio * Ve * Pamb + (1 - Kratio ) * Ve * Ke) + ( Frac_loop - (Ke/Pamb) ) * ((1 - Kratio) * Ve * Pamb)
+———————————————————————————————————————————————————————————————————————————————————————————————————————————————
+                                                                Ve*Pamb
 
-Frac_freshgas = Gas from cylinder in fraction of O2 (eg, 0.32, 0.36, 0.40) 
-MV = Minute Volume (SCR rate… 20l, 15l etc)
-P = Total pressure at relevant depth ATA + Hydrostatic pressure
-Frac_met_surface = Fraction of o2 metabolism on surface (ATA = 1), O2 consumption per min/MV. 
-                   Eg; (0.8l/20l) = 0.04 or use the static value 0.042
+Fmix = Gas from cylinder in fraction of O2 (eg, 0.32, 0.36, 0.40) 
+Ve = Minute Volume/RMV ex (SCR rate… 20l, 15l )
+Vo2 = Volume O2L/min ex (0.8l)
+Pamb = Total ambient pressure at relevant depth ex 1.6ata 
+Kratio = bellow ratio fraction ex (1/10 1/6)
+Ke = Ve/Vo2 ex (0.8l/20l) = 0.04 or use the static value 0.042
 Frac_loop = Fraction of oxygen in RB loop (the result of this equation) FiO2
+
+
+For a steady state we can do as follows: 
+
+Qdump = Pamb * Kratio * Ke * Vo2
+
+( Qdump + Vo2) * Fmix - Vo2
+——————————————————————————— ==>
+           Qdump
+
+( Pamb * Kratio * Ke * Vo2 + Vo2) * Fmix - Vo2
+—————————————————————————————————————————————— ==>
+           Pamb * Kratio * Ke * Vo2
+
+( Pamb * Kratio * Ke * 1 + 1) * Fmix - 1
+———————————————————————————————————————— ==>
+           Pamb * Kratio * Ke * 1
+
+(Pamb * Kratio * Ke + 1) *Fmix -1
+—————————————————————————————————
+        Pamb * Kratio * Ke 
 """
 import argparse
 import sys
