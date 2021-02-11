@@ -59,7 +59,11 @@ def calc_loop(Fmix, Ve, Pamb, Kratio):
         o2_drop.append(frac_loop)
     return o2_drop
 
-
+def stedy_state(Fmix, Ve, Pamb, Kratio):
+    Vo2 = 0.8
+    Ke = Ve/Vo2
+    loopo2 = (((Pamb * Kratio * Ke +1)*Fmix) -1)/(Pamb * Kratio * Ke)
+    return loopo2
 
 # Cacluate the minumim and maximum safe area for a given oxygen fraction
 def min_max_gas(Fmix, Ve, Pamb, Kratio, deco):
@@ -89,6 +93,7 @@ def run(args):
     depth = args.depth
     Kratio = args.Kratio
     graph = args.graph
+    steadystate = args.steadystate
     no_min_max = args.nominmax
     noppo2 = args.nopp02
     nofio2 = args.nofi02
@@ -114,6 +119,10 @@ level of at FiO2 %.2f, ppO2 %.2f
         plt.plot(x, y, label=label)
         plt.legend()
         plt.show()
+
+    if steadystate:
+        loopo2 = stedy_state(Fmix, Ve, Pamb, Kratio)
+        print("Steady state loop: %.2f" % loopo2)
 
     if not nofio2:
         print("FiO2 %.2f" % o2drop[-1])
@@ -154,6 +163,9 @@ def main():
         dest="Kratio", type=int, default=10, required=False)
     parser.add_argument("-g", "--graph", help="Print a graph of oxygen drop",
         dest="graph", type=lambda x: bool(strtobool(x)),
+        nargs='?', const=True, default=False)
+    parser.add_argument("-s", "--steadystate", help="print steady state value",
+        dest="steadystate", type=lambda x: bool(strtobool(x)),
         nargs='?', const=True, default=False)
     parser.add_argument("--no-ppo2",
         help="Do not print oxygen parsial pressure",
